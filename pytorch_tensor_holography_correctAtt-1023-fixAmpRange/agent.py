@@ -309,8 +309,6 @@ class HologramAgent(BaseAgent):
         # first calculate the norm for each element and then calculate mean on all element
         data_term = torch.mean(torch.abs(out_amp - correct_cpx), dim=(0,1,2,3))   # formula (3) 
 
-        # out_field_real, out_field_imag = utils.polar_to_rect(out_amp, out_amp.new(out_amp.shape).fill_(0.0))
-        # out_field = torch.stack([out_field_real, out_field_imag], dim=-1)
 
         # calculating reconstruction loss at multiple reconstruction distances               
         all_pcp_loss = torch.tensor([0], dtype=torch.float, requires_grad=True, device='cuda:0')
