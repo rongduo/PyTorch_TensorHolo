@@ -140,7 +140,7 @@ class Config(object):
         group.add_argument('--nr_epochs', type=int, default=1000, help="total number of epochs to train")
         group.add_argument('--lr', type=float, default=1e-4, help="initial learning rate")
         group.add_argument('--lr_D', type=float, default=1e-4, help="initial learning rate")
-        group.add_argument('--lr_step_size', type=int, default=100, help="step size for learning rate decay")
+        group.add_argument('--lr_step_size', type=int, default=50, help="step size for learning rate decay")
         group.add_argument('--continue', dest='cont',  action='store_true', help="continue training from checkpoint")
         group.add_argument('--ckpt', type=str, default='latest', required=False, help="desired checkpoint to restore")
         group.add_argument('--vis', action='store_true', default=False, help="visualize output in training")

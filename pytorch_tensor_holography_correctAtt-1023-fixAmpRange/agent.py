@@ -335,7 +335,7 @@ class HologramAgent(BaseAgent):
         all_pcp_loss = all_pcp_loss / input_img.size(0)
         
         #print('data term is ', data_term, 'pcp loss is ', all_pcp_loss)
-        loss_dict = {'data_term':  data_term, 'pcp_loss':all_pcp_loss}
+        loss_dict = {'data_term':  data_term, 'pcp_loss': 20 * all_pcp_loss}
 
         # return the focal stack reconstructed for the last example in current batch
         output = [out_amp, out_phase, cur_pred_stack, cur_tgt_stack]  
@@ -396,29 +396,4 @@ class HologramAgent(BaseAgent):
         return input
 
         
-    def evaluate(self, test_loader):
-        pbar = tqdm(test_loader)
-        avg_mse = AverageMeter("MSE")
-        avg_grad = AverageMeter("TV")
-        avg_vgg = AverageMeter("VGG")
-
-        pbar = tqdm(range(n_step))
-        for i, data in enumerate(pbar):
-            with torch.no_grad():
-                results, losses = self.forward(data)
-                mse_loss = losses['mse']
-                tv_loss = losses['tv']
-                vgg_loss = losses['vgg']
-
-            pbar.set_description("EVALUATION")
-            avg_mse.update(mse_loss.item())
-            avg_grad.update(tv_loss.item())
-            avg_vgg.update(vgg_loss.item())
-            
-        self.val_tb.add_scalar("MSE", avg_mse.avg, global_step=self.clock.epoch)
-        self.val_tb.add_scalar("TV loss", avg_grad.avg, global_step=self.clock.epoch)
-        self.val_tb.add_scalar("VGG loss", avg_vgg.avg, global_step=self.clock.epoch)
-
-        '''
-        '''
-
+    
