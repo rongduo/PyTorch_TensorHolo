@@ -1,0 +1,1 @@
+python train.py -g '0,1' --vis --batch_size 2 --lr 1e-4 --channel rgb --cont
