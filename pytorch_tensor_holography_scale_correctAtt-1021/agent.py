@@ -242,6 +242,7 @@ class HologramAgent(BaseAgent):
 
     def recon_focal_stack(self, input_depth, out_amp, out_phs, target_amp, target_phs, recon_dist, beta=0.35):        
         pred_amp_stack, pred_phase_stack = self.propagator(out_phs, recon_dist * 1e-3, out_amp)
+
         target_amp_stack, target_phase_stack = self.propagator(target_phs, recon_dist * 1e-3, target_amp)
         pred_amp_stack = pred_amp_stack.squeeze()
         target_amp_stack = target_amp_stack.squeeze()

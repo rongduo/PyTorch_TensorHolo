@@ -42,8 +42,11 @@ def scale(x, label, weight=None):  ##### x.size() should be NxCxHxW
     return x
 
 def save_img(img_array, file_name):
+    if img_array.shape[0] == 3:
+        img_array = img_array.transpose((1, 2, 0))
     img = (img_array * 255).astype(np.uint8)
-    img = img[..., ::-1]
+    if img.shape[-1] ==3:
+        img = img[..., ::-1]
     sio.imsave(file_name, img)
 
 def save_fstack_video(fstack, file_name):
@@ -122,6 +125,10 @@ def test(test_loader, tr_agent, save_dir, postifx=''):
         
         print('shape of pred_stack and tgt_stack are ', pred_stack.shape, tgt_stack.shape)
 
+        input_img, input_depth = data[0], data[2]
+        input_img = input_img.squeeze().cpu().numpy()
+        input_depth = input_depth.squeeze().cpu().numpy()
+
         for j in range(batch_size):
             time_list.append(cur_elapsed / batch_size)
             target_amp = data[3][j, ...].squeeze().detach().cpu().numpy()
@@ -171,10 +178,20 @@ def test(test_loader, tr_agent, save_dir, postifx=''):
             save_img(pred_amp, holo_amp_name)
             save_img(pred_phs, holo_phs_name)
             save_img(target_amp, str.replace(holo_amp_name, 'pred', 'tgt'))
+            save_img(input_img, str.replace(holo_phs_name, 'holo-phase-pred',  'input-img'))
+            save_img(input_depth, str.replace(holo_phs_name, 'holo-phase-pred',  'input-depth'))
             #print('target_phs.shape is', target_phs.shape)
             save_img(target_phs, str.replace(holo_phs_name, 'pred', 'tgt')) 
 
+
+
             cat_stack = errors_fstack[-1]
+            for p_id, p_name in [[0, 'far'], [15, 'mid'], [-1, 'near']]:
+                pred_image = cat_stack[p_id][:,:384,:]
+                tgt_image = cat_stack[p_id][:,384:,:]
+                save_img(pred_image,  os.path.join(save_dir, index + f'-fstack-{p_name}-pred.png'))
+                save_img(tgt_image,  os.path.join(save_dir, index + f'-fstack-{p_name}-tgt.png'))
+           
             save_fstack_video(cat_stack, os.path.join(save_dir, index + '-focal_stacks.mp4'))
 
     errors_all = sorted(errors_all, key=itemgetter('psnr_fstack_scale'), reverse=True)
